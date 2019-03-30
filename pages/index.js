@@ -1,5 +1,7 @@
-function Home() {
-  return <div>Welcome to Next.js!</div>;
-}
+import Overview from "./overview"
 
-export default Home;
+const Index = () => (
+  <Overview />
+)
+
+export default Index

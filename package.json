@@ -11,8 +11,16 @@
   "author": "john lee",
   "license": "ISC",
   "dependencies": {
-    "next": "^8.0.3",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "@material-ui/core": "latest",
+    "@material-ui/icons": "latest",
+    "@material-ui/styles": "latest",
+    "jss": "latest",
+    "next": "latest",
+    "prop-types": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-jss": "^8.1.0",
+    "express": "^4.16.4",
+    "typeface-roboto": "0.0.54"
   }
 }
