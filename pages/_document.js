@@ -25,6 +25,10 @@ class MyDocument extends Document {
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"
           />
+          <link rel="icon" 
+            type="image/png"
+            href="http://sbly-web-prod-shareably.netdna-ssl.com/assets/shareably-favicon.ico"
+          />
         </Head>
         <body>
           <Main />

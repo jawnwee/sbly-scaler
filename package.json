@@ -14,13 +14,14 @@
     "@material-ui/core": "latest",
     "@material-ui/icons": "latest",
     "@material-ui/styles": "latest",
+    "axios": "^0.18.0",
+    "express": "^4.16.4",
     "jss": "latest",
     "next": "latest",
     "prop-types": "latest",
     "react": "latest",
     "react-dom": "latest",
     "react-jss": "^8.1.0",
-    "express": "^4.16.4",
     "typeface-roboto": "0.0.54"
   }
 }

@@ -5,6 +5,7 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import JssProvider from 'react-jss/lib/JssProvider';
 import getPageContext from '../sblyTheme';
+import { APIClient } from '../api/APIClient';
 
 class SblyScalerApp extends App {
   constructor() {
@@ -49,5 +50,24 @@ class SblyScalerApp extends App {
     );
   }
 }
+
+SblyScalerApp.getInitialProps = async function() {
+  const axios = require('axios');
+
+  const client = new APIClient()
+
+  const test = await client.getTest()
+
+  console.log(test)
+
+  // const res = await client.getAllInsights()
+
+  // console.log(res)
+
+  return {
+    result: {}
+  }
+}
+
 
 export default SblyScalerApp;
