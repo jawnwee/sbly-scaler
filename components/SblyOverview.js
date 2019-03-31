@@ -27,6 +27,7 @@ const styles = theme => ({
   title: {
     paddingLeft: leftPadding,
     paddingTop: 5,
+    fontWeight: 700,
   },
 
   header: {
