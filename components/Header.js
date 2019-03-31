@@ -5,19 +5,21 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
-import IconButton from '@material-ui/core/IconButton';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
 import SettingsIcon from '@material-ui/icons/Settings';
+import HelpIcon from '@material-ui/icons/Help';
 import TimelineIcon from '@material-ui/icons/Timeline';
+import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import Link from 'next/link'
 import SblyTheme from '../sblyTheme';
 
 const drawerWidth = 240;
@@ -83,17 +85,30 @@ class Header extends React.Component {
         </div>
         <Divider />
         <List>
-          {['Overview', 'Settings'].map((text, index) => (
+          <Link href="/overview">
+            <ListItem button key='overview'>
+              <ListItemIcon>
+                <TimelineIcon />
+              </ListItemIcon>
+              <ListItemText primary={'Overview'} />
+            </ListItem>
+          </Link>
+          <Link href="/wiki">
+            <ListItem button key='wiki'>
+              <ListItemIcon>
+                <HelpIcon />
+              </ListItemIcon>
+              <ListItemText primary={'Wiki'} />
+            </ListItem>
+          </Link>
+        </List>
+        <Divider />
+        <List>
+          {['Settings'].map((text, index) => (
             <ListItem button key={text}>
-              <ListItemIcon>{
-                index == 0 ? (
-                  <TimelineIcon />
-                ) : index == 1 ? (
-                  <SettingsIcon />
-                ) : (
-                  <div />
-                )
-              }</ListItemIcon>
+              <ListItemIcon>
+                <SettingsIcon />
+              </ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
           ))}
@@ -158,7 +173,7 @@ class Header extends React.Component {
 Header.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  title: PropTypes.object.isRequired,
+  title: PropTypes.string.isRequired,
   children: PropTypes.object.isRequired,
 };
 

@@ -56,13 +56,10 @@ SblyScalerApp.getInitialProps = async function() {
 
   const client = new APIClient()
 
-  const test = await client.getTest()
+  const res = await client.getAllInsights()
 
-  console.log(test)
-
-  // const res = await client.getAllInsights()
-
-  // console.log(res)
+  console.log(res)
+  console.log("hit")
 
   return {
     result: {}
