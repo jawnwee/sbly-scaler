@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 const ReactMarkdown = require('react-markdown');
 const ReactDOM = require('react-dom');
+import Typography from '@material-ui/core/Typography';
 
 const input = `
 ## Overview
@@ -31,7 +32,9 @@ function Overview(props) {
   return (
     <Header title='Wiki'>
       <Paper className={classes.root}>
-        <ReactMarkdown source={input} />
+        <Typography>
+          <ReactMarkdown source={input} />
+        </Typography>
       </Paper>
     </Header>
   );

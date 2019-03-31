@@ -1,14 +1,11 @@
 import { combineReducers } from "redux";
 import { ADD_AD_INSIGHTS } from "./constants";
+import { loadState } from "./localStorage";
 
-const initialState = {
-  adInsights: {},
-  overview: {},
-};
+var initialState = loadState();
 
 const adInsightsReducer = (state = initialState, action) => {
   if (action.type == ADD_AD_INSIGHTS) {
-
     // this is really inefficient, but for the sake of time -- doing the fastest possible to mold
     // to the data I want here for ad insights
     const response = action.payload;
@@ -64,18 +61,17 @@ const adInsightsReducer = (state = initialState, action) => {
     // id: 'a24cf682-fe5a-d243-d508-a6f3455326c7'
     let newState = {
       ...state,
-      adInsights: {
-        ...state.adInsights,
-        adInsights,
-      },
+      adInsights: adInsights,
       overview: {
         totalSpend: totalSpend,
         totalRevenue: totalRevenue,
       }
     }
+    initialState = newState;
     return newState;
+  } else {
+    return state;
   }
-  return initialState
 }
 
 export default combineReducers({

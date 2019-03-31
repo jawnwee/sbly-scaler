@@ -33,9 +33,65 @@ class APIClient {
       }))
     })
 
-    await axios.all(getRequests).then(response => {
-      store.dispatch(addAdInsights(response));
+    const result = await axios.all(getRequests);
+    const response = result;
+    var adInsights = {};
+    var totalSpend = 0;
+    var totalRevenue = 0;
+    response.forEach(function(res) {
+      const insights = res.data
+      const date = res.config.params.date;
+      insights.forEach(function(insight) {
+        const adID = insight.id;
+        const spend = insight.spend === undefined ? 0 : insight.spend;
+        const revenue = insight.revenue === undefined ? 0 : insight.revenue;
+        const clicks = insight.clicks === undefined ? 0 : insight.clicks;
+        const impressions = insight.impressions === undefined ? 0 : insight.impressions;
+        totalSpend += spend;
+        totalRevenue += revenue;
+        let newInsight = {
+          "spend": spend,
+          "revenue": revenue,
+          "clicks": clicks,
+          "impressions": impressions,
+          "cpi": spend/impressions,
+          "ctr": clicks/impressions,
+          "roi": (revenue - spend)/spend,
+        };
+        var mutatedInsights = {};
+        if (adInsights[adID] === undefined) {
+          mutatedInsights = {
+            [date]: newInsight
+          }
+        } else {
+          mutatedInsights = {
+            ...adInsights[adID].insights,
+            [date]: newInsight
+          }
+        }
+        let newAdInsights = {
+          ...adInsights,
+          [adID]: {
+            ...adInsights[adID],
+            insights: mutatedInsights
+          }
+        }
+        adInsights = newAdInsights;
+      });
     });
+    // spend: 7.62,
+    // impressions: 2871,
+    // revenue: 16.87,
+    // clicks: 482,
+    // id: 'a24cf682-fe5a-d243-d508-a6f3455326c7'
+    let newState = {
+      adInsights: adInsights,
+      overview: {
+        totalSpend: Math.round(totalSpend*100)/100,
+        totalRevenue: Math.round(totalRevenue*100)/100,
+      }
+    }
+    return newState;
 
     // disaptch to redux store so that connect will handle and pass to all react components
   }

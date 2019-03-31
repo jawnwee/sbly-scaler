@@ -85,7 +85,7 @@ class Header extends React.Component {
         </div>
         <Divider />
         <List>
-          <Link href="/overview">
+          <Link href="/">
             <ListItem button key='overview'>
               <ListItemIcon>
                 <TimelineIcon />
@@ -169,12 +169,5 @@ class Header extends React.Component {
     );
   }
 }
-
-Header.propTypes = {
-  classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired,
-  title: PropTypes.string.isRequired,
-  children: PropTypes.object.isRequired,
-};
 
 export default withStyles(styles, { withTheme: true })(Header);

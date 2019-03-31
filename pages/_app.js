@@ -55,14 +55,12 @@ class SblyScalerApp extends App {
   }
 }
 
-SblyScalerApp.getInitialProps = async function() {
+// SblyScalerApp.getInitialProps = async function() {
 
-  await APIClient.fetchAllInsights()
-
-  return {
-    result: {}
-  }
-}
+//   return {
+//     result: {}
+//   }
+// }
 
 
 export default SblyScalerApp;

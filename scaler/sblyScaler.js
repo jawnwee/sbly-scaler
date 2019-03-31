@@ -1,7 +1,5 @@
-export const generateAdInsights = function generateAdInsights(adInsights, finished) {
+export const generateAdInsights = async function generateAdInsights(adInsights, finished) {
   var adIds = [];
-  console.log('generate function');
-  console.log(adInsights);
   if (adInsights) {
     adIds = Object.keys(adInsights);
   } else {
@@ -14,12 +12,18 @@ export const generateAdInsights = function generateAdInsights(adInsights, finish
       break;
     }
     const dates = Object.keys(data);
+    dates.sort(function(a,b){
+      // Turn your strings into dates, and then subtract them
+      // to get a value that is either negative, positive, or zero.
+      return new Date(b.date) - new Date(a.date);
+    });
     var totalSpend = 0;
     var totalRevenue = 0;
     var totalcpi = 0;
     var totalroi = 0;
     var totalctr = 0;
     var totalDates = 0
+    var graph = {}
     for(var date of dates) {
       totalDates += 1;
       const current = data[date];
@@ -28,30 +32,44 @@ export const generateAdInsights = function generateAdInsights(adInsights, finish
       const cpi = current.cpi;
       const roi = current.roi;
       const ctr = current.ctr;
+      graph = {
+        ...graph,
+        [date]: {
+          "spend": spend,
+          "revenue": revenue,
+          "cpi": cpi,
+          "roi": roi,
+          "ctr": ctr,
+        }
+      }
 
       totalSpend += spend;
-      totalRevenue += totalRevenue;
+      totalRevenue += revenue;
       totalcpi += cpi;
       totalroi += roi;
       totalctr += ctr
     }
-    const avgSpend = totalSpend / totalDates;
-    const avgRevenue = totalRevenue / totalDates;
-    const avgCPI = totalcpi / totalDates;
-    const avgROI = totalroi / totalDates;
-    const avgCTR = totalctr / totalDates;
-
+    const avgCPI = Math.round((totalcpi / totalDates) * 10000)/10000
+    const avgROI = Math.round((totalroi / totalDates) * 10000)/10000;
+    const avgCTR = Math.round((totalctr / totalDates) * 10000)/10000;
+    console.log(graph);
     const newResult = {
       ...result,
-      [adID]: {
-        "avgSpend": avgSpend,
-        "avgRevenue": avgRevenue,
+      [adId]: {
+        "totalSpend": Math.round(totalSpend * 100)/100,
+        "totalRevenue": Math.round(totalRevenue * 100)/100,
         "avgCPI": avgCPI,
         "avgROI": avgROI,
         "avgCTR": avgCTR,
+        "graph": graph,
       }
     };
     result = newResult;
   }
   finished(result);
+  determineNewBudget(adInsights, finished);
 };
+
+async function determineNewBudget(adInsights, finished) {
+
+} 
