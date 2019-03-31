@@ -5,7 +5,9 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import JssProvider from 'react-jss/lib/JssProvider';
 import getPageContext from '../sblyTheme';
-import { APIClient } from '../api/APIClient';
+import { Provider } from "react-redux";
+import store from "../redux/store";
+import APIClient from "../api/APIClient";
 
 class SblyScalerApp extends App {
   constructor() {
@@ -43,7 +45,9 @@ class SblyScalerApp extends App {
             <CssBaseline />
             {/* Pass pageContext to the _document though the renderPage enhancer
                 to render collected styles on server-side. */}
-            <Component pageContext={this.pageContext} {...pageProps} />
+            <Provider store={store}>
+              <Component pageContext={this.pageContext} {...pageProps} />
+            </Provider>
           </MuiThemeProvider>
         </JssProvider>
       </Container>
@@ -52,14 +56,8 @@ class SblyScalerApp extends App {
 }
 
 SblyScalerApp.getInitialProps = async function() {
-  const axios = require('axios');
 
-  const client = new APIClient()
-
-  const res = await client.getAllInsights()
-
-  console.log(res)
-  console.log("hit")
+  await APIClient.fetchAllInsights()
 
   return {
     result: {}

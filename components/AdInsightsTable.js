@@ -1,4 +1,5 @@
-import React from 'react';
+import { connect } from "react-redux";
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -24,34 +25,45 @@ const styles = {
   },
 };
 
-function AdInsightsTable(props) {
-  const { classes } = props;
-
-  return (
-    <Paper className={classes.root}>
-      <Typography variant='h6' color="textSecondary" className={classes.title}noWrap>
-        Ad Insights
-      </Typography>
-      <Table className={classes.table}>
-        <TableHead>
-          <TableRow>
-            <TableCell>Ad ID</TableCell>
-            <TableCell align="right">Total Revenue</TableCell>
-            <TableCell align="right">Total Spend</TableCell>
-            <TableCell align="right">𝜇 CTR</TableCell>
-            <TableCell align="right">𝜇 CPM</TableCell>
-            <TableCell align="right">New Budget</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-        </TableBody>
-      </Table>
-    </Paper>
-  );
-}
-
-AdInsightsTable.propTypes = {
-  classes: PropTypes.object.isRequired,
+const mapStateToProps = state => {
+  return { ...state, adInsights: state.adInsightsReducer.adInsights.adInsights };
 };
 
-export default withStyles(styles)(AdInsightsTable);
+class ConnectedAdInsightsTable extends Component {
+
+  constructor(props) {
+    super(props);
+    console.log(props);
+  }
+
+  render() {
+    const { classes, adInsights } = this.props;
+    const adIds = Object.keys(adInsights);
+    return (
+      <Paper className={classes.root}>
+        <Typography variant='h6' color="textSecondary" className={classes.title}noWrap>
+          Ad Insights
+        </Typography>
+        <Table className={classes.table}>
+          <TableHead>
+            <TableRow>
+              <TableCell>Ad ID</TableCell>
+              <TableCell align="right">Total Revenue</TableCell>
+              <TableCell align="right">Total Spend</TableCell>
+              <TableCell align="right">𝜇 CTR</TableCell>
+              <TableCell align="right">𝜇 CPM</TableCell>
+              <TableCell align="right">New Budget</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+          </TableBody>
+        </Table>
+      </Paper>
+    );
+  }
+}
+
+const AdInsightsTable = connect(mapStateToProps)(withStyles(styles)(ConnectedAdInsightsTable));
+
+
+export default AdInsightsTable;
