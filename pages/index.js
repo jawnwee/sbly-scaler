@@ -5,7 +5,6 @@ import AdInsightsTable from "../components/AdInsightsTable";
 import SblyOverview from "../components/SblyOverview";
 import APIClient from "../api/APIClient";
 
-
 const Index = function(props) {
   const { sblyInsights } = props;
   return (

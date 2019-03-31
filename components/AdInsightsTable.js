@@ -55,11 +55,7 @@ class ConnectedAdInsightsTable extends Component {
       const avgCPI = adInsights[adId].avgCPI;
       const avgROI = adInsights[adId].avgROI;
       const avgCTR = adInsights[adId].avgCTR;
-      var loading = true;
       const suggestedBudget = adInsights[adId].suggestedBudget;
-      if (suggestedBudget) {
-        loading = false;
-      }
       rows.push(
         <TableRow key={adId}>
           <TableCell component="th" scope="row">
@@ -70,11 +66,11 @@ class ConnectedAdInsightsTable extends Component {
           <TableCell align="right">{avgCTR}</TableCell>
           <TableCell align="right">{avgCPI}</TableCell>
           <TableCell align="right">
-            { loading ? (
+            { suggestedBudget === undefined ? (
                 <CircularProgress size={24} />
               ): (
                 <div>
-                  lol
+                  {suggestedBudget}
                 </div>
               )
             }

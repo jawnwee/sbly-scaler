@@ -13,6 +13,26 @@ class APIClient {
   constructor() {
   }
 
+  async fetchCurrentBudgets(adIds, completion) {
+    const url = `${API_URL}/ad`;
+    var getRequests = [];
+    adIds.forEach(function(adId) {
+      getRequests.push(axios.get(`${url}/${adId}`));
+    });
+    await axios.all(getRequests).then(function(response) {
+      var budgets = {};
+      response.forEach(function(res) {
+        const adId = res.data.id;
+        const budget = res.data.budget;
+        budgets = {
+          ...budgets,
+          [adId]: budget
+        }
+      });
+      completion(budgets);
+    });
+  }
+
   async fetchAllInsights() {
     /*
     Because the api is constrained to a specific date range, the api client is 
@@ -31,7 +51,7 @@ class APIClient {
           metrics: allMetrics,
         }
       }))
-    })
+    });
 
     const result = await axios.all(getRequests);
     const response = result;
