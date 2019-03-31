@@ -9,6 +9,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { generateAdInsights } from "../scaler/sblyScaler"; 
 
 const styles = {
   root: {
@@ -33,37 +35,84 @@ class ConnectedAdInsightsTable extends Component {
 
   constructor(props) {
     super(props);
-    console.log(props);
+    this.state = {
+      loading: true,
+      adInsights: props.adInsights,
+    }
+    this.finishedScaling = this.finishedScaling.bind(this);
+    generateAdInsights(props.adInsights, this.finishedScaling);
+  }
+
+
+  finishedScaling = (newAdInsights) => {
+    console.log("finished scaling hit");
+    console.log(newAdInsights);
+    this.setState({
+      loading: false,
+      adInsights: newAdInsights,
+    });
+  }
+
+  renderTableBody = () => {
+    const { adInsights } = this.state;
+    // return (
+    //   {data.map(n => (
+    //         <TableRow key={n.id}>
+    //           <TableCell component="th" scope="row">
+    //             {n.name}
+    //           </TableCell>
+    //           <TableCell align="right">{n.calories}</TableCell>
+    //           <TableCell align="right">{n.fat}</TableCell>
+    //           <TableCell align="right">{n.carbs}</TableCell>
+    //           <TableCell align="right">{n.protein}</TableCell>
+    //           <TableCell align="right">lol</TableCell>
+    //         </TableRow>
+    //       ))}
+    //   );
+    return (
+      <Table className={classes.table}>
+        <TableHead>
+          <TableRow>
+            <TableCell>Ad ID</TableCell>
+            <TableCell align="right">Total Revenue</TableCell>
+            <TableCell align="right">Total Spend</TableCell>
+            <TableCell align="right">𝜇 CTR</TableCell>
+            <TableCell align="right">𝜇 CPM</TableCell>
+            <TableCell align="right">New Budget</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+        </TableBody>
+      </Table>
+    );
   }
 
   render() {
     const { classes, adInsights } = this.props;
-    const adIds = Object.keys(adInsights);
+    const { loading } = this.state;
+    var adIds = []
+    if (adInsights) {
+      adIds = Object.keys(adInsights);
+    }
+    console.log(loading);
+    console.log("rendered again");
     return (
       <Paper className={classes.root}>
         <Typography variant='h6' color="textSecondary" className={classes.title}noWrap>
           Ad Insights
         </Typography>
-        <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Ad ID</TableCell>
-              <TableCell align="right">Total Revenue</TableCell>
-              <TableCell align="right">Total Spend</TableCell>
-              <TableCell align="right">𝜇 CTR</TableCell>
-              <TableCell align="right">𝜇 CPM</TableCell>
-              <TableCell align="right">New Budget</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-          </TableBody>
-        </Table>
+        {
+          loading ? (
+            <CircularProgress />
+          ) : (
+            this.renderTableBody()
+          )
+        }
       </Paper>
     );
   }
 }
 
 const AdInsightsTable = connect(mapStateToProps)(withStyles(styles)(ConnectedAdInsightsTable));
-
 
 export default AdInsightsTable;

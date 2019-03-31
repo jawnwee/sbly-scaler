@@ -24,12 +24,17 @@ const adInsightsReducer = (state = initialState, action) => {
         const spend = insight.spend === undefined ? 0 : insight.spend;
         const revenue = insight.revenue === undefined ? 0 : insight.revenue;
         const clicks = insight.clicks === undefined ? 0 : insight.clicks;
+        const impressions = insight.impressions === undefined ? 0 : insight.impressions;
         totalSpend += spend;
         totalRevenue += revenue;
         let newInsight = {
           "spend": spend,
           "revenue": revenue,
           "clicks": clicks,
+          "impressions": impressions,
+          "cpi": spend/impressions,
+          "ctr": clicks/impressions,
+          "roi": (revenue - spend)/spend,
         };
         var mutatedInsights = {};
         if (adInsights[adID] === undefined) {
