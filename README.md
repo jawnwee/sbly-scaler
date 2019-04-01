@@ -1,3 +1,4 @@
+
 ## Overview
 
 This assignment was completed with a focus on product-platform and campaign evaluations.
@@ -8,6 +9,13 @@ Therefore, I switched my focus around a little bit and did what I'm best at -- b
 recommendations. I wanted to make sure I understood what was going on in the math and be able to explain it clearly to users of the platform. Below are all the details I considered and built.
 
 Enjoy!
+
+## Setup
+
+- Pull repo
+- run npm install
+- run npm build
+- run npm dev
 
 ## Goals
 
