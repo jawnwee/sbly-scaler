@@ -8,8 +8,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import TrendingDownIcon from '@material-ui/icons/TrendingDown';
+import TrendingFlatIcon from '@material-ui/icons/TrendingFlat';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { generateAdInsights } from "../scaler/sblyScaler";
 import Link from 'next/link';
@@ -18,6 +19,12 @@ import Avatar from '@material-ui/core/Avatar';
 import red from '@material-ui/core/colors/red';
 import green from '@material-ui/core/colors/green';
 
+function truncate(string){
+   if (string.length > 10)
+      return string.substring(0,10)+'...';
+   else
+      return string;
+};
 
 const styles = {
   root: {
@@ -46,6 +53,10 @@ const styles = {
     color: red[500]
   }
 };
+
+function handleDelete() {
+}
+
 class ConnectedAdInsightsTable extends Component {
 
   constructor(props) {
@@ -58,14 +69,18 @@ class ConnectedAdInsightsTable extends Component {
   }
 
   componentDidMount() {
-    const { adInsights } = this.props;
-    generateAdInsights(adInsights, this.finishedScaling);
+    const { adInsights, overview } = this.props;
+    generateAdInsights(overview, adInsights, this.finishedScaling);
   }
 
   finishedScaling = (newAdInsights) => {
     this.setState({
       adInsights: newAdInsights
     });
+  }
+
+  handleDelete = () => {
+
   }
 
   renderTableRow = (adIds, adInsights) => {
@@ -79,19 +94,21 @@ class ConnectedAdInsightsTable extends Component {
       const avgCTR = adInsights[adId].avgCTR;
       const suggestedBudget = adInsights[adId].suggestedBudget;
       const currentBudget = adInsights[adId].currentBudget
-      const string = `${currentBudget}->${suggestedBudget}`;
       var disable = suggestedBudget === undefined || currentBudget === undefined;
       var arrow = null;
-      if (suggestedBudget >= currentBudget) {
-        arrow = (<ArrowDropUpIcon className={classes.up} fontSize="large"/>);
+      if (suggestedBudget > currentBudget) {
+        arrow = (<TrendingUpIcon className={classes.up} fontSize="default"/>);
+      } else if (suggestedBudget < currentBudget) {
+        arrow = (<TrendingDownIcon className={classes.down} fontSize="default"/>)
       } else {
-        arrow = (<ArrowDropDownIcon className={classes.down} fontSize="large"/>)
+        arrow = (<TrendingFlatIcon fontSize="default"/>)
       }
+      const adjustedIdString = truncate(adId);
       rows.push(
         <Link key={adId} href={`/insight?adId=${adId}`}>
           <TableRow key={adId} hover={!disable}>
             <TableCell component="th" scope="row">
-              {adId}
+              {adjustedIdString}
             </TableCell>
             <TableCell align="right">{totalRevenue}</TableCell>
             <TableCell align="right">{totalSpend}</TableCell>
@@ -101,12 +118,21 @@ class ConnectedAdInsightsTable extends Component {
               { disable ? (
                   <CircularProgress size={24} />
                 ): (
+                  <div>
+                    {currentBudget}
+                  </div>
+                )
+              }
+            </TableCell>
+            <TableCell align="right">
+              { disable ? (
+                  <CircularProgress size={24} />
+                ): (
                   <Chip
-                      avatar={<Avatar className={classes.avatar} >
-                              {arrow}
-                              </Avatar>}
-                      label={string}
+                      onDelete={handleDelete}
+                      label={suggestedBudget}
                       className={classes.chip}
+                      deleteIcon={arrow}
                     />
                 )
               }
@@ -119,7 +145,7 @@ class ConnectedAdInsightsTable extends Component {
   }
 
   renderTableBody = () => {
-    const { classes } = this.props;
+    const { classes, } = this.props;
     const { adInsights } = this.state;
     var adIds = []
     if (adInsights) {
@@ -140,7 +166,8 @@ class ConnectedAdInsightsTable extends Component {
             <TableCell align="right">Total Revenue</TableCell>
             <TableCell align="right">Total Spend</TableCell>
             <TableCell align="right">𝜇 CTR</TableCell>
-            <TableCell align="right">𝜇 CPM</TableCell>
+            <TableCell align="right">𝜇 CPI</TableCell>
+            <TableCell align="right">Current Budget</TableCell>
             <TableCell align="right">Suggested Budget</TableCell>
           </TableRow>
         </TableHead>

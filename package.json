@@ -20,6 +20,7 @@
     "next": "latest",
     "prop-types": "latest",
     "react": "latest",
+    "react-d3-tree": "^1.12.3",
     "react-dom": "latest",
     "react-jss": "^8.1.0",
     "react-markdown": "^4.0.6",

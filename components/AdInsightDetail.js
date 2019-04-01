@@ -20,7 +20,7 @@ const styles = {
 };
 
 const mapStateToProps = state => {
-  return { ...state, adInsights: state.adInsightsReducer.adInsights };
+  return { ...state, adInsights: state.adInsightsReducer.adInsights, overview: state.adInsightsReducer.overview };
 };
 
 class ConnectedAdInsightDetail extends React.Component {
@@ -30,8 +30,16 @@ class ConnectedAdInsightDetail extends React.Component {
   }
 
   render() {
-    const { classes, adInsights, adId } = this.props;
+    const { classes, adInsights, adId, overview} = this.props;
     const data = generateGraphPoints(adId, adInsights);
+    var budgetCalculations = {}
+    var suggestedBudget = 0
+    if (adInsights) {
+      if (adInsights[adId]) {
+        budgetCalculations = adInsights[adId].budgetCalculations;
+        suggestedBudget = adInsights[adId].suggestedBudget;
+      }
+    }
     const roiDotStyle = { stroke: '#8884d8' };
     const ctrDotStyle = { stroke: '#82ca9d' };
     return (
@@ -39,7 +47,7 @@ class ConnectedAdInsightDetail extends React.Component {
         <Typography variant='subtitle1' color="textSecondary" className={classes.title} noWrap>
           {adId}
         </Typography>
-        <LineChart width={700} height={400} data={data}>
+        <LineChart width={900} height={400} data={data}>
           <Line type="monotone" dataKey="roi" stroke="none" dot={roiDotStyle} activeDot={{r: 8}}/>
           <Line type="monotone" dataKey="ctr" stroke="none" dot={ctrDotStyle} activeDot={{r: 8}}/>
           <Line type="monotone" dataKey="roiRegression" stroke="#8884d8" />
@@ -50,6 +58,21 @@ class ConnectedAdInsightDetail extends React.Component {
           <Tooltip />
           <Legend />
         </LineChart>
+        <Typography variant='subtitle1' color="textSecondary" className={classes.title} noWrap>
+          Scaler
+        </Typography>
+        <Typography>
+          ROI Slope: {budgetCalculations.roiSlope}
+        </Typography>
+        <Typography>
+          CTR Slope: {budgetCalculations.ctrSlope}
+        </Typography>
+        <Typography>
+          Scale Factor: {budgetCalculations.scaleFactor}
+        </Typography>
+        <Typography>
+          Suggested Budget: {suggestedBudget}
+        </Typography>
       </Paper>
     );
   }

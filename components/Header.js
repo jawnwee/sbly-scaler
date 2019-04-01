@@ -12,7 +12,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import SettingsIcon from '@material-ui/icons/Settings';
 import HelpIcon from '@material-ui/icons/Help';
-import TimelineIcon from '@material-ui/icons/Timeline';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -88,7 +88,7 @@ class Header extends React.Component {
           <Link href="/">
             <ListItem button key='overview'>
               <ListItemIcon>
-                <TimelineIcon />
+                <DashboardIcon />
               </ListItemIcon>
               <ListItemText primary={'Overview'} />
             </ListItem>

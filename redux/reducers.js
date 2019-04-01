@@ -11,7 +11,8 @@ const adInsightsReducer = (state = initialState, action) => {
     const response = action.payload;
     return {
       ...state,
-      adInsights: response
+      adInsights: response.adInsights,
+      overivew: response.overview,
     };
   } else {
     return state;

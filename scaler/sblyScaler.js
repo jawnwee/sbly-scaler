@@ -3,7 +3,7 @@ import APIClient from "../api/APIClient";
 import store from "../redux/store";
 import { addAdInsights } from "../redux/actions";
 
-export const generateAdInsights = async function generateAdInsights(adInsights, finished) {
+export const generateAdInsights = async function generateAdInsights(overview, adInsights, finished) {
   var adIds = [];
   if (adInsights) {
     adIds = Object.keys(adInsights);
@@ -69,10 +69,10 @@ export const generateAdInsights = async function generateAdInsights(adInsights, 
     result = newResult;
   }
   finished(result);
-  await determineNewBudget(result, finished);
+  await determineNewBudget(overview, result, finished);
 };
 
-async function determineNewBudget(adInsights, finished) {
+async function determineNewBudget(overview, adInsights, finished) {
   var adIds = [];
   if (adInsights) {
     adIds = Object.keys(adInsights);
@@ -83,8 +83,11 @@ async function determineNewBudget(adInsights, finished) {
     var tempInsights = adInsights;
     for(var adId of adIds) {
       if (currentBudgets[adId]) {
-        tempInsights = generateNewBudget(adId, tempInsights, currentBudgets[adId]);
-        store.dispatch(addAdInsights(tempInsights));
+        tempInsights = generateNewBudget(overview, adId, tempInsights, currentBudgets[adId]);
+        store.dispatch(addAdInsights({
+          adInsights: tempInsights,
+          overview: overview,
+        }));
         finished(tempInsights);
       }
     }
@@ -148,7 +151,7 @@ export const generateGraphPoints = function generateGraphPoints(adId, adInsights
   return data;
 }
 
-export const generateNewBudget = function generateNewBudget(adId, adInsights, budget) {
+export const generateNewBudget = function generateNewBudget(overview, adId, adInsights, budget) {
   var roiDataPoints = [];
   var ctrDataPoints = [];
   const graph = adInsights[adId].graph;
@@ -183,19 +186,27 @@ export const generateNewBudget = function generateNewBudget(adId, adInsights, bu
   const ctrSlope = ctrRegressionResult.equation[0];
   const ctrYIntercept = ctrRegressionResult.equation[1];
 
-  const newBudget = decisionTree(roiSlope, ctrSlope, avgROI, budget);
+  const scaleFactor = decisionTree(roiSlope, ctrSlope, avgROI, budget, overview);
+  const newBudget = calculateNewBudget(scaleFactor, budget);
 
   return {
     ...adInsights,
     [adId]: {
       ...adInsights[adId],
       currentBudget: budget,
-      suggestedBudget: newBudget,
+      suggestedBudget: Math.round(newBudget*100)/100,
+      budgetCalculations: {
+        "roiSlope": roiSlope,
+        "roiYIntercept": roiYIntercept,
+        "ctrSlope": ctrSlope,
+        "ctrYIntercept": ctrYIntercept,
+        "scaleFactor": scaleFactor,
+      }
     },
   };
 }
 
-function decisionTree(roiSlope, ctrSlope, avgROI, budget) {
+function decisionTree(roiSlope, ctrSlope, avgROI, budget, overview) {
   /*
   
   Our decision tree will fairly straightforward:
@@ -215,23 +226,82 @@ function decisionTree(roiSlope, ctrSlope, avgROI, budget) {
   eventaully get some % to increase our budget by
 
   */
+  const overallROI = (overview.totalRevenue - overview.totalSpend) / overview.totalSpend;
+  var increaseScaleFactor = 0.20;
+  var decreaseScaleFactor = 0.20;
 
-  // I know in overall I wrote that 20% is max that we want, but this scale factor will go down and most likely be <=20%
-  var scaleFactor = 0.25;
+  if (overallROI < 0) {
+    // be careful here for us since we're losing money, we want to be less aggressive in our incraseScaleFactor and make our decreaseScaleFactor higher
+    increaseScaleFactor = 0.15;
+    decreaseScaleFactor = 0.3
+  } else {
+    increaseScaleFactor = 0.20 * (1 + overallROI);
+    // make sure our scale factor doesn't go too crazy
+    if (increaseScaleFactor > 0.3) {
+      increaseScaleFactor = 0.25;
+    }
+  }
+
   var newBudget = budget
   if (ctrSlope > 0 && roiSlope > 0) {
-    // leave as is
+    // determine a budget based off our current ROI
+    if (avgROI > 1) {
+      increaseScaleFactor = 0.3
+      return increaseScaleFactor
+    } else {
+      // scale the increase factor down based on avg roi
+      return increaseScaleFactor * (1+avgROI);
+    }
   } else if (ctrSlope < 0 && roiSlope > 0) {
     // branch into where roi is increasing and ctr is decreasing
     // we want to branch carefully here because ctr is going down; roi may be trending right now, but it could start going down
+    // if the ctr downward slope is too high, we'll honestly want to scale down a bit
+    increaseScaleFactor = increaseScaleFactor + roiSlope;
+
+    // we want to scale down if ctr slope trending down
+    if (increaseScaleFactor < 0.1) {
+      return -decreaseScaleFactor * 0.5;
+    }
+
+    // otherwise, try scaling up
+    return increaseScaleFactor
   } else if (ctrSlope > 0 && roiSlope < 0) {
     // if roi is trending down, but ctr is trending up, we still want to put money in this if our overall roi is doing well
+    increaseScaleFactor = increaseScaleFactor + roiSlope;
+    // if our avgROI is already < 0 -- scale down to be safe
+    if (avgROI < 0) {
+      return -(decreaseScaleFactor * (1+Math.abs(avgROI)))
+    }
+    // same as above, but with ROI slope; treat this more carefully though since ROI is our KPI here
+    // if the increaseScaleFactor budges too much, we actually should scale down a lot because its risky
+    if (increaseScaleFactor < 0.12) {
+      return 0.1
+    }
+
+    // otherwise, lets try increasing
+    return increaseScaleFactor
   } else {
-    // lower
-    // I would pretty much reduce by 30% because this is just not a great one to invest in for obvious reasons
-    return budget - (budget * 0.30);
+    // lower this, but look at our current overall ROI and lower based off a scale on this
+    if (avgROI >= 1) {
+      return -0.08
+    } else if (avgROI > 0 && avgROI < 1) {
+      // since our ROI is still high, lets make sure to scale down less
+      return -(decreaseScaleFactor * avgROI);
+    }
+    // use avg roi as a scale factor to increasingly scale down because it was already performing poorly
+    return -(decreaseScaleFactor * (1+Math.abs(avgROI)));
   }
-  return newBudget
+
+  // somehow hit here when it shouldn't
+  return 0.01
+}
+
+function calculateNewBudget(scaleFactor, budget) {
+  if (scaleFactor > 0) {
+    return budget + (scaleFactor * budget);
+  } else {
+    return budget - (-scaleFactor * budget);
+  }
 }
 
 

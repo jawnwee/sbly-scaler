@@ -10,7 +10,7 @@ const Index = function(props) {
   return (
     <Header title='Overview'>
       <SblyOverview overview={sblyInsights.overview} />
-      <AdInsightsTable adInsights={sblyInsights.adInsights} />
+      <AdInsightsTable adInsights={sblyInsights.adInsights} overview={sblyInsights.overview} />
     </Header>
   );
 }

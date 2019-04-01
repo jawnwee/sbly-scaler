@@ -41,12 +41,19 @@ Enjoy!
 ### How I view an ad being successful to Sharebly
 - CPI
   - While this is pretty important to keep as low as possible, I don't think this matters as much when scaling a budget
-  - The ad itself is probably what really controls this
-  - That said, I think this could still be utilized if our ROI for an ad is still positive because more if we can drive this cost low, then we could shift our focus to clicks on this ad
+  - I only want to keep an eye on this for now; this may change in the future
 - CTR
-  - Very important for Shareably because this means we're getting a lot of traffic and potentially a lot more revenue
+  - Pretty important for Shareably because this means we're getting a lot of traffic and potentially a lot more revenue
+  - We'll mostly just use this as signal, not too much in budget calculation here
 - ROI
   - The most important & easiest to use when determining scaling a budget. If an ad is giving us money, put more money in.
+- Greed, greed, greed
+  - Follow ROI trend more so than CTR trend
+
+### Variables and scale numbers used
+
+- Base increase scale factor = 0.2
+- base decrease scale factor = 0.2
 
 ### Linear Regression
 
@@ -59,7 +66,15 @@ Enjoy!
 as this honestly would've been the best, but I also wanted to not deal with not knowing exactly what was going on in the algorithm
 - Instead, I decided to go with my own decision tree with a 2x2 decision matrix based off the linear regression results and split off in its own sub-branches to first determine a base scale value.
 - When I previously worked with facebook ads, I heavily focused on my CPM and increased my budget at roughly 25% when I "felt" that it was performing well
-- Here I think I would say 25% is way too aggressive and would put budgets more at 20% as a **maximum** multiplier
+- In this platform's case, I want to rapidly increase the ads that are performing and **trending** well
+
+### Budget Calculation
+
+- See sblyScaler.js
+- Naive solution
+  - We pretty much take the "best" approach we can take with a heavy emphasis on ROI
+  - If our ROI is trending upwards, we'll up the budget even though our avg ROI isn't that great
+    - Trends are powerful and with such few data points per ad, I think this is still a good approach to go
 
 
 ## Other Strategies Considered & Future Implementation
@@ -84,6 +99,7 @@ long-term. I would hone in on visualization for and really make sure that anyone
 - [NextJS](https://nextjs.org/)
 - [Introduction to Decision Tree Learning: ID3](https://medium.com/machine-learning-guy/an-introduction-to-decision-tree-learning-id3-algorithm-54c74eb2ad55)
 - [brainJS](https://github.com/BrainJS/brain.js)
+- [Cloud Trading Algorithms](https://www.cloud9trader.com/algorithms)
 `;
 
 const styles = {
