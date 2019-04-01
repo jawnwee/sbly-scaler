@@ -57,22 +57,24 @@ class SblyOverview extends React.Component {
       <Grid container className={classes.root} spacing={16}>
         <Grid item>
           <Paper className={classes.paper}>
-            <Typography variant='subtitle1' color="textSecondary" className={classes.title} noWrap>
-              Revenue
-            </Typography>
-            <Typography variant='h2' color="textSecondary" className={classes.header} noWrap>
-              ${overview.totalRevenue}
-            </Typography>
-          </Paper>
-        </Grid>
-        <Grid item>
-          <Paper className={classes.paper}>
-            <Typography variant='subtitle1' color="textSecondary" className={classes.title} noWrap>
-              Spend
-            </Typography>
-            <Typography variant='h2' color="textSecondary" className={classes.header} noWrap>
-              ${overview.totalSpend}
-            </Typography>
+            <Grid container className={classes.root} spacing={16}>
+              <Grid item>
+                <Typography variant='subtitle1' color="textSecondary" className={classes.title} noWrap>
+                  Revenue
+                </Typography>
+                <Typography variant='h2' color="textSecondary" className={classes.header} noWrap>
+                  ${overview.totalRevenue}
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography variant='subtitle1' color="textSecondary" className={classes.title} noWrap>
+                  Spend
+                </Typography>
+                <Typography variant='h2' color="textSecondary" className={classes.header} noWrap>
+                  ${overview.totalSpend}
+                </Typography>
+              </Grid>
+            </Grid>
           </Paper>
         </Grid>
       </Grid>

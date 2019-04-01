@@ -1,6 +1,7 @@
 import regression from 'regression';
 import APIClient from "../api/APIClient";
-
+import store from "../redux/store";
+import { addAdInsights } from "../redux/actions";
 
 export const generateAdInsights = async function generateAdInsights(adInsights, finished) {
   var adIds = [];
@@ -83,6 +84,7 @@ async function determineNewBudget(adInsights, finished) {
     for(var adId of adIds) {
       if (currentBudgets[adId]) {
         tempInsights = generateNewBudget(adId, tempInsights, currentBudgets[adId]);
+        store.dispatch(addAdInsights(tempInsights));
         finished(tempInsights);
       }
     }
@@ -92,10 +94,16 @@ async function determineNewBudget(adInsights, finished) {
 export const generateGraphPoints = function generateGraphPoints(adId, adInsights) {
   var roiDataPoints = [];
   var ctrDataPoints = [];
+  if (adInsights === undefined) {
+    return [];
+  }
+  if (adInsights[adId] === undefined) {
+    return [];
+  }
   const graph = adInsights[adId].graph;
   const avgROI = adInsights[adId].avgROI;
   if (!graph) {
-    return {}
+    return []
   }
   var data = [];
   const dates = Object.keys(graph);
@@ -181,7 +189,8 @@ export const generateNewBudget = function generateNewBudget(adId, adInsights, bu
     ...adInsights,
     [adId]: {
       ...adInsights[adId],
-      suggestedBudget: 10,
+      currentBudget: budget,
+      suggestedBudget: newBudget,
     },
   };
 }
@@ -198,12 +207,31 @@ function decisionTree(roiSlope, ctrSlope, avgROI, budget) {
   Generate a seed scaler value
   if +ctr && +roi => increase budget by our maximum factor
   if -ctr && -roi => lower budget by maximum factor
-  if -roi && +ctr => look at cpi & see if its worth increasing budget (ie, if cpi is less than total avg cpi)
-  if +roi && -ctr => look at cpi & see if its worth increasing budget (ie, if cpi is less than total avg cpi)
+  if -roi && +ctr => look at cpi & see if its worth increasing budget (ie, if cpi is less than total avg cpi) - decrease otherwise
+  if +roi && -ctr => look at cpi & see if its worth increasing budget (ie, if cpi is less than total avg cpi) - decrease otherwise
 
-  take the seed & use our overall ROI to determine an appropriate value to increase by
+  take the seed & use our overall ROI to determine an appropriate value to increase by since the roi could already be < 0
+
+  eventaully get some % to increase our budget by
 
   */
+
+  // I know in overall I wrote that 20% is max that we want, but this scale factor will go down and most likely be <=20%
+  var scaleFactor = 0.25;
+  var newBudget = budget
+  if (ctrSlope > 0 && roiSlope > 0) {
+    // leave as is
+  } else if (ctrSlope < 0 && roiSlope > 0) {
+    // branch into where roi is increasing and ctr is decreasing
+    // we want to branch carefully here because ctr is going down; roi may be trending right now, but it could start going down
+  } else if (ctrSlope > 0 && roiSlope < 0) {
+    // if roi is trending down, but ctr is trending up, we still want to put money in this if our overall roi is doing well
+  } else {
+    // lower
+    // I would pretty much reduce by 30% because this is just not a great one to invest in for obvious reasons
+    return budget - (budget * 0.30);
+  }
+  return newBudget
 }
 
 

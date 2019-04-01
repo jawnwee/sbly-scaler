@@ -103,16 +103,6 @@ class Header extends React.Component {
           </Link>
         </List>
         <Divider />
-        <List>
-          {['Settings'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                <SettingsIcon />
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
       </div>
     );
 

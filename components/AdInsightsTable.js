@@ -8,8 +8,16 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { generateAdInsights } from "../scaler/sblyScaler"; 
+import { generateAdInsights } from "../scaler/sblyScaler";
+import Link from 'next/link';
+import Chip from '@material-ui/core/Chip';
+import Avatar from '@material-ui/core/Avatar';
+import red from '@material-ui/core/colors/red';
+import green from '@material-ui/core/colors/green';
+
 
 const styles = {
   root: {
@@ -24,6 +32,19 @@ const styles = {
     paddingLeft: 20,
     paddingTop: 10
   },
+  chip:{
+    background: 'white',
+  },
+  avatar: {
+    background: 'white',
+    marginRight: -8
+  },
+  up: {
+    color: green[500]
+  },
+  down: {
+    color: red[500]
+  }
 };
 class ConnectedAdInsightsTable extends Component {
 
@@ -48,6 +69,7 @@ class ConnectedAdInsightsTable extends Component {
   }
 
   renderTableRow = (adIds, adInsights) => {
+    const { classes } = this.props;
     var rows = []
     adIds.forEach(function(adId) {
       const totalSpend = adInsights[adId].totalSpend;
@@ -56,26 +78,41 @@ class ConnectedAdInsightsTable extends Component {
       const avgROI = adInsights[adId].avgROI;
       const avgCTR = adInsights[adId].avgCTR;
       const suggestedBudget = adInsights[adId].suggestedBudget;
+      const currentBudget = adInsights[adId].currentBudget
+      const string = `${currentBudget}->${suggestedBudget}`;
+      var disable = suggestedBudget === undefined || currentBudget === undefined;
+      var arrow = null;
+      if (suggestedBudget >= currentBudget) {
+        arrow = (<ArrowDropUpIcon className={classes.up} fontSize="large"/>);
+      } else {
+        arrow = (<ArrowDropDownIcon className={classes.down} fontSize="large"/>)
+      }
       rows.push(
-        <TableRow key={adId}>
-          <TableCell component="th" scope="row">
-            {adId}
-          </TableCell>
-          <TableCell align="right">{totalRevenue}</TableCell>
-          <TableCell align="right">{totalSpend}</TableCell>
-          <TableCell align="right">{avgCTR}</TableCell>
-          <TableCell align="right">{avgCPI}</TableCell>
-          <TableCell align="right">
-            { suggestedBudget === undefined ? (
-                <CircularProgress size={24} />
-              ): (
-                <div>
-                  {suggestedBudget}
-                </div>
-              )
-            }
-          </TableCell>
-        </TableRow>
+        <Link key={adId} href={`/insight?adId=${adId}`}>
+          <TableRow key={adId} hover={!disable}>
+            <TableCell component="th" scope="row">
+              {adId}
+            </TableCell>
+            <TableCell align="right">{totalRevenue}</TableCell>
+            <TableCell align="right">{totalSpend}</TableCell>
+            <TableCell align="right">{avgCTR}</TableCell>
+            <TableCell align="right">{avgCPI}</TableCell>
+            <TableCell align="right">
+              { disable ? (
+                  <CircularProgress size={24} />
+                ): (
+                  <Chip
+                      avatar={<Avatar className={classes.avatar} >
+                              {arrow}
+                              </Avatar>}
+                      label={string}
+                      className={classes.chip}
+                    />
+                )
+              }
+            </TableCell>
+          </TableRow>
+        </Link>
       )
     });
     return rows;
