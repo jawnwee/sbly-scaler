@@ -30,6 +30,11 @@ const styles = theme => ({
     fontWeight: 700,
   },
 
+  section: {
+    paddingLeft: 5,
+    marginBottom: 10,
+  },
+
   header: {
     fontFamily: "Eczar",
     paddingLeft: leftPadding,
@@ -56,6 +61,9 @@ class SblyOverview extends React.Component {
     return (
       <Grid container className={classes.root} spacing={16}>
         <Grid item>
+          <Typography variant='h5' className={classes.section}>
+            Overall
+          </Typography>
           <Paper className={classes.paper}>
             <Grid container className={classes.root} spacing={16}>
               <Grid item>
