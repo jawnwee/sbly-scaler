@@ -200,6 +200,7 @@ export const generateNewBudget = function generateNewBudget(overview, adId, adIn
         "roiYIntercept": roiYIntercept,
         "ctrSlope": ctrSlope,
         "ctrYIntercept": ctrYIntercept,
+        "avgROI": avgROI,
         "scaleFactor": scaleFactor,
       }
     },

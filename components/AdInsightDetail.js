@@ -32,11 +32,13 @@ class ConnectedAdInsightDetail extends React.Component {
   render() {
     const { classes, adInsights, adId, overview} = this.props;
     const data = generateGraphPoints(adId, adInsights);
-    var budgetCalculations = {}
-    var suggestedBudget = 0
+    var budgetCalculations = {};
+    var suggestedBudget = 0;
+    var currentBudget = 0;
     if (adInsights) {
       if (adInsights[adId]) {
         budgetCalculations = adInsights[adId].budgetCalculations;
+        currentBudget = adInsights[adId].currentBudget;
         suggestedBudget = adInsights[adId].suggestedBudget;
       }
     }
@@ -66,6 +68,12 @@ class ConnectedAdInsightDetail extends React.Component {
         </Typography>
         <Typography>
           CTR Slope: {budgetCalculations.ctrSlope}
+        </Typography>
+        <Typography>
+          Average ROI: {budgetCalculations.avgROI}
+        </Typography>
+        <Typography>
+          Current Budget: {currentBudget}
         </Typography>
         <Typography>
           Scale Factor: {budgetCalculations.scaleFactor}

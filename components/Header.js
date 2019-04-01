@@ -59,6 +59,9 @@ const styles = theme => ({
     paddingLeft: 20,
     paddingTop: 10
   },
+  subtitle: {
+    paddingLeft: 20,
+  },
   header: {
     fontWeight: 700,
   }
@@ -81,6 +84,9 @@ class Header extends React.Component {
         <div className={classes.toolbar} >
           <Typography variant='h6' color="textSecondary" className={classes.title}noWrap>
               Shareably Scaler
+          </Typography>
+          <Typography variant='subtitle1' color="textSecondary" className={classes.subtitle} noWrap>
+              v0.01
           </Typography>
         </div>
         <Divider />

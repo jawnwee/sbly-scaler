@@ -39,8 +39,13 @@ const styles = {
     paddingLeft: 20,
     paddingTop: 10
   },
-  chip:{
+  upChip:{
     background: 'white',
+    color: green[500],
+  },
+  downChip:{
+    background: 'white',
+    color: red[500],
   },
   avatar: {
     background: 'white',
@@ -103,6 +108,25 @@ class ConnectedAdInsightsTable extends Component {
       } else {
         arrow = (<TrendingFlatIcon fontSize="default"/>)
       }
+      const percent = 100*Math.round(100*((suggestedBudget - currentBudget) / currentBudget))/100
+      const symbol = percent > 0 ? '+' : '-';
+      var chip =(<div />);
+      const chipLabel = `(${symbol}${percent}%) ${suggestedBudget}`
+      if (percent < 0) {
+        chip = (<Chip
+                    onDelete={handleDelete}
+                    label={chipLabel}
+                    className={classes.downChip}
+                    deleteIcon={arrow}
+                  />)
+      } else {
+        chip = (<Chip
+                    onDelete={handleDelete}
+                    label={chipLabel}
+                    className={classes.upChip}
+                    deleteIcon={arrow}
+                  />)
+      }
       const adjustedIdString = truncate(adId);
       rows.push(
         <Link key={adId} href={`/insight?adId=${adId}`}>
@@ -127,14 +151,7 @@ class ConnectedAdInsightsTable extends Component {
             <TableCell align="right">
               { disable ? (
                   <CircularProgress size={24} />
-                ): (
-                  <Chip
-                      onDelete={handleDelete}
-                      label={suggestedBudget}
-                      className={classes.chip}
-                      deleteIcon={arrow}
-                    />
-                )
+                ): chip
               }
             </TableCell>
           </TableRow>
