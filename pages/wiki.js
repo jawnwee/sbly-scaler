@@ -18,13 +18,6 @@ recommendations. I wanted to make sure I understood what was going on in the mat
 
 Enjoy!
 
-## Setup
-
-- Pull repo
-- run npm install
-- run npm build
-- run npm dev
-
 ## Goals
 
 - Focus on a simple, but powerful platform UI to allow user to make stronger product decision
