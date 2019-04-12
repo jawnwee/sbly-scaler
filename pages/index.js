@@ -6,21 +6,20 @@ import SblyOverview from "../components/SblyOverview";
 import APIClient from "../api/APIClient";
 
 const Index = function(props) {
-  const { sblyInsights } = props;
+  const { sblyInsightsScaled } = props;
   return (
     <Header title='Overview'>
-      <SblyOverview overview={sblyInsights.overview} />
-      <AdInsightsTable adInsights={sblyInsights.adInsights} overview={sblyInsights.overview} />
+      <SblyOverview overview={sblyInsightsScaled.overview} />
+      <AdInsightsTable adInsights={sblyInsightsScaled.adInsights} overview={sblyInsightsScaled.overview} />
     </Header>
   );
 }
 
 Index.getInitialProps = async function() {
-  const result = await APIClient.fetchAllInsights();
+  const result = await APIClient.fetchAllScaledInsights();
   return {
-    'sblyInsights': result
+    'sblyInsightsScaled': result,
   }
 };
-
 
 export default Index

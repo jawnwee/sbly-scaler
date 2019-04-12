@@ -75,7 +75,6 @@ class ConnectedAdInsightsTable extends Component {
 
   componentDidMount() {
     const { adInsights, overview } = this.props;
-    generateAdInsights(overview, adInsights, this.finishedScaling);
   }
 
   finishedScaling = (newAdInsights) => {

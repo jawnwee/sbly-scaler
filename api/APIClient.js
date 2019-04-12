@@ -5,12 +5,19 @@ var axios = require('axios')
 const config = {
   headers: {'X-My-Custom-Header': 'Header-Value'}
 };
-const API_URL = 'http://api.shareably.net:3030';
+const API_URL = 'http://localhost:3030';
 axios.defaults.headers.common['Authorization'] = 'SHAREABLY_SECRET_TOKEN';
 
 class APIClient {
 
   constructor() {
+  }
+
+  async fetchAllScaledInsights() {
+    const url = `${API_URL}/ad-insights-scaler`;
+    const result = await axios.get(`${url}`);
+    const insights = result.data
+    return insights;
   }
 
   async fetchCurrentBudgets(adIds, completion) {
